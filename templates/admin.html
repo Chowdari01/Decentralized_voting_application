@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - Voting System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f2f5, #e4e7ec);
+      color: #333;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.4rem;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #6c757d;
+    }
+
+    .section {
+      background: #f9fafc;
+      padding: 25px 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      border: 1px solid #dee2e6;
+    }
+
+    h2 {
+      color: #495057;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .button {
+      background-color: #0d6efd;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #0b5ed7;
+    }
+
+    .button.danger {
+      background-color: #dc3545;
+    }
+
+    .button.danger:hover {
+      background-color: #bb2d3b;
+    }
+
+    .button:disabled {
+      background-color: #adb5bd;
+      cursor: not-allowed;
+    }
+
+    .candidate-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+    }
+
+    .candidate-item button {
+      padding: 5px 12px;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      background-color: #e63946;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .candidate-item button:hover {
+      background-color: #c82333;
+    }
+
+    .error {
+      color: #e74c3c;
+      margin-top: 8px;
+    }
+
+    .success {
+      color: #28a745;
+      margin-top: 8px;
+    }
+
+    .help-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .timer {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #333;
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 1rem;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .styled-table thead tr {
+      background-color: #0d6efd;
+      color: #ffffff;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .styled-table th,
+    .styled-table td {
+      padding: 14px 20px;
+    }
+
+    .styled-table tbody tr {
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+      background-color: #f3f6f9;
+    }
+
+    .styled-table tbody tr:hover {
+      background-color: #e9f0fb;
+    }
+
+    .back-button {
+      display: inline-block;
+      padding: 10px 16px;
+      background: #e9ecef;
+      color: #333;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      transition: background 0.3s;
+    }
+
+    .back-button:hover {
+      background: #d6d8db;
+    }
+    .duration-selector {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+  }
+  
+  .duration-selector h3 {
+    margin-bottom: 15px;
+    color: #495057;
+    font-size: 1.1rem;
+  }
+  
+  .duration-presets {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .preset-button {
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .preset-button:hover {
+    background: #dee2e6;
+  }
+  
+  .preset-button.active {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+  
+  .custom-duration {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+  }
+  
+  .time-inputs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .time-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .time-input-group input {
+    width: 80px;
+    text-align: center;
+    padding: 8px;
+    font-size: 1.1rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+  }
+  
+  .time-input-group label {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+  
+  .total-time {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #495057;
+  }
+  
+  .total-time span {
+    font-weight: 600;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-button">← Back to Home</a>
+    <div class="header">
+      <h1>Admin Dashboard</h1>
+      <p>Manage Election and Candidates</p>
+    </div>
+
+    <div class="section">
+      <h2>Add Candidates</h2>
+      <div id="candidateInputs">
+        <div class="input-group">
+          <input type="text" id="candidateName" placeholder="Enter candidate name(s)">
+          <p class="help-text">Separate multiple candidate names with commas (e.g., "Kim, Lee, Park")</p>
+          <br>
+          <button class="button" onclick="addCandidateToList()">Add to List</button>
+        </div>
+      </div>
+      <div id="candidatesList"></div>
+      <button class="button" onclick="submitCandidates()">Submit All Candidates</button>
+      <div id="candidateMessage"></div>
+    </div>
+
+    <div class="section">
+      <h2>Current Candidates</h2>
+      <div id="currentCandidates"></div>
+    </div>
+
+    <div class="section">
+      <h2>Election Control</h2>
+      <div class="duration-selector">
+      <h3>Voting Duration</h3>
+    
+      <div class="duration-presets">
+        <button class="preset-button" onclick="setDuration(30)">30 min</button>
+        <button class="preset-button" onclick="setDuration(60)">1 hour</button>
+        <button class="preset-button" onclick="setDuration(120)">2 hours</button>
+        <button class="preset-button" onclick="setDuration(1440)">1 day</button>
+      </div>
+      
+      <div class="custom-duration">
+        <div class="time-inputs">
+          <div class="time-input-group">
+            <input type="number" id="durationHours" min="0" value="0">
+            <label for="durationHours">Hours</label>
+          </div>
+          <div class="time-input-group">
+            <input type="number" id="durationMinutes" min="0" max="59" value="30">
+            <label for="durationMinutes">Minutes</label>
+          </div>
+        </div>
+        <p class="total-time">Total time: <span id="totalDuration">30 minutes</span></p>
+      </div>
+      <div class="button-group">
+        <button class="button" onclick="startElection()">Start Election</button>
+        <button class="button danger" onclick="resetElection()">Reset Election</button>
+      </div>
+      <div id="electionStatus" class="timer"></div>
+      <div id="electionMessage"></div>
+    </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script>
+    let candidates = [];
+    let contract;
+    let accounts;
+    let countdownInterval;
+
+    async function initializeContract() {
+      try {
+        const response = await fetch("/contract-address");
+        if (!response.ok) throw new Error('Failed to fetch contract');
+
+        const contractInfo = await response.json();
+
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum);
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+        } else {
+          throw new Error("No Ethereum provider detected");
+        }
+
+        contract = new web3.eth.Contract(contractInfo.abi, contractInfo.address);
+        accounts = await web3.eth.getAccounts();
+
+        const owner = await contract.methods.owner().call();
+        if (owner.toLowerCase() !== accounts[0].toLowerCase()) {
+          alert("You are not authorized as admin.");
+          return false;
+        }
+
+        await updateElectionStatus();
+        await loadCurrentCandidates();
+        return true;
+      } catch (error) {
+        console.error("Contract initialization error:", error);
+        return false;
+      }
+    }
+
+    function addCandidateToList() {
+      const input = document.getElementById('candidateName');
+      const namesArray = input.value.trim().split(',').map(n => n.trim()).filter(Boolean);
+      const message = namesArray.length === 1 ? "Candidate added" : `${namesArray.length} candidates added`;
+
+      for (const name of namesArray) {
+        if (!candidates.includes(name)) {
+          candidates.push(name);
+        }
+      }
+
+      updateCandidatesList();
+      input.value = '';
+      showMessage('candidateMessage', message, 'success');
+    }
+
+    function updateCandidatesList() {
+      const list = document.getElementById('candidatesList');
+      list.innerHTML = candidates.map((name, index) => `
+        <div class="candidate-item">
+          <span>${name}</span>
+          <button class="button" onclick="removeCandidate(${index})">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function removeCandidate(index) {
+      candidates.splice(index, 1);
+      updateCandidatesList();
+    }
+
+    async function submitCandidates() {
+      if (!contract) return showMessage('candidateMessage', 'Contract not initialized', 'error');
+      if (!candidates.length) return showMessage('candidateMessage', 'Add at least one candidate', 'error');
+
+      try {
+        await contract.methods.addCandidate(candidates).send({ from: accounts[0] });
+        showMessage('candidateMessage', 'Candidates added successfully', 'success');
+        candidates = [];
+        updateCandidatesList();
+        loadCurrentCandidates();
+      } catch (err) {
+        showMessage('candidateMessage', 'Error adding candidates: ' + err.message, 'error');
+      }
+    }
+
+    async function loadCurrentCandidates() {
+      if (!contract) return;
+
+      try {
+          const candidatesList = await contract.methods.getCandidates().call();
+          const currentCandidatesDiv = document.getElementById('currentCandidates');
+
+          if (!candidatesList || candidatesList.length === 0) {
+              currentCandidatesDiv.innerHTML = '<p>No candidates added yet.</p>';
+              return;
+          }
+
+          const tableHTML = `
+              <table class="styled-table">
+                  <thead>
+                      <tr>
+                          <th>ID</th>
+                          <th>Name</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      ${candidatesList.map((c, i) => `
+                          <tr>
+                              <td>${i}</td>
+                              <td>${c.name}</td>
+                          </tr>
+                      `).join('')}
+                  </tbody>
+              </table>
+          `;
+
+          currentCandidatesDiv.innerHTML = tableHTML;
+      } catch (error) {
+          console.error('Error loading candidates:', error);
+          document.getElementById('currentCandidates').innerHTML = '<p style="color:red;">Failed to load candidates.</p>';
+      }
+  }
+
+  function setDuration(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    
+    document.getElementById('durationHours').value = hours;
+    document.getElementById('durationMinutes').value = mins;
+    updateTotalDuration();
+    
+    // Update active state of preset buttons
+    document.querySelectorAll('.preset-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+  }
+  
+  function updateTotalDuration() {
+    const hours = parseInt(document.getElementById('durationHours').value) || 0;
+    const minutes = parseInt(document.getElementById('durationMinutes').value) || 0;
+    const totalMinutes = hours * 60 + minutes;
+    
+    let displayText = '';
+    if (hours > 0) {
+      displayText += `${hours} hour${hours > 1 ? 's' : ''}`;
+    }
+    if (minutes > 0) {
+      if (displayText) displayText += ' and ';
+      displayText += `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    }
+    if (!displayText) displayText = '0 minutes';
+    
+    document.getElementById('totalDuration').textContent = displayText;
+    return totalMinutes;
+  }
+
+  async function startElection() {
+    const hours = parseInt(document.getElementById('durationHours').value) || 0;
+    const minutes = parseInt(document.getElementById('durationMinutes').value) || 0;
+    const totalMinutes = hours * 60 + minutes;
+    
+    if (totalMinutes <= 0) {
+      return showMessage('electionMessage', 'Enter a valid duration', 'error');
+    }
+
+    try {
+      await contract.methods.startElection(totalMinutes * 60).send({ from: accounts[0] });
+      showMessage('electionMessage', 'Election started successfully!', 'success');
+      updateElectionStatus();
+    } catch (err) {
+      showMessage('electionMessage', 'Failed to start election: ' + err.message, 'error');
+    }
+  }
+
+  function setupDurationListeners() {
+    document.getElementById('durationHours').addEventListener('input', updateTotalDuration);
+    document.getElementById('durationMinutes').addEventListener('input', updateTotalDuration);
+  }
+    async function resetElection() {
+      if (!confirm("Are you sure you want to reset the election?")) return;
+
+      try {
+        await contract.methods.resetElection().send({ from: accounts[0] });
+        showMessage('electionMessage', 'Election reset', 'success');
+        candidates = [];
+        updateCandidatesList();
+        await loadCurrentCandidates();
+        await updateElectionStatus();
+      } catch (err) {
+        showMessage('electionMessage', 'Reset failed: ' + err.message, 'error');
+      }
+    }
+
+    function showMessage(id, msg, type) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = type;
+      setTimeout(() => { el.textContent = ''; el.className = ''; }, 3000);
+    }
+
+    async function updateElectionStatus() {
+      if (!contract) return;
+
+      try {
+        const isOngoing = await contract.methods.checkElectionPeriod().call();
+        const votingEnd = await contract.methods.votingEnd().call();
+        const current = Math.floor(Date.now() / 1000);
+        const remaining = votingEnd - current;
+
+        if (isOngoing && remaining > 0) {
+          startAccurateCountdown(remaining);
+        } else {
+          clearInterval(countdownInterval);
+          document.getElementById('electionStatus').textContent = 'No active election';
+        }
+      } catch (err) {
+        console.error("Error getting election status:", err);
+      }
+    }
+
+    function startAccurateCountdown(durationInSeconds) {
+      const el = document.getElementById('electionStatus');
+      const endTime = Date.now() + durationInSeconds * 1000;
+
+      clearInterval(countdownInterval);
+
+      countdownInterval = setInterval(() => {
+        const now = Date.now();
+        const remaining = Math.floor((endTime - now) / 1000);
+
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          el.textContent = 'Election has ended';
+          return;
+        }
+
+        const hrs = Math.floor(remaining / 3600);
+        const mins = Math.floor((remaining % 3600) / 60);
+        const secs = remaining % 60;
+
+        el.textContent = `Time remaining: ${hrs}h ${mins}m ${secs}s`;
+      }, 1000);
+    }
+
+    window.addEventListener('load', async () => {
+    await initializeContract();
+    setupDurationListeners();
+    updateTotalDuration();
+  });
+  </script>
+</body>
+</html>
